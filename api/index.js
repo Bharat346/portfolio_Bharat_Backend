@@ -207,6 +207,63 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+app.post("/api/signup", async (req, res) => {
+  try {
+    const { name, email, password, bio, role, avatarUrl } = req.body;
+
+    // 1. Basic validation
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        error: "Name, email, and password are required",
+      });
+    }
+
+    // 2. Check if user already exists
+    const existingUser = await db
+      .select()
+      .from(profile)
+      .where(eq(profile.email, email))
+      .limit(1);
+
+    if (existingUser.length > 0) {
+      return res.status(409).json({
+        error: "Email already registered",
+      });
+    }
+
+    // 3. Hash password (bcrypt)
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // 4. Insert user
+    const [newUser] = await db
+      .insert(profile)
+      .values({
+        name,
+        email,
+        bio,
+        role: role ?? "admin", // default role
+        avatarUrl,
+        passwordHash,
+      })
+      .returning({
+        id: profile.id,
+        name: profile.name,
+        email: profile.email,
+        role: profile.role,
+      });
+
+    // 5. Respond
+    res.status(201).json({
+      message: "Signup successful",
+      user: newUser,
+    });
+  } catch (err) {
+    console.error("Signup error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 /* =====================================================
    PROFILE
