@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 const db = require("../config/db");
 const { profile, projects, skills, experience } = require("../db/schema");
@@ -156,18 +157,56 @@ app.get("/health", async (req, res) => {
 /* =====================================================
    LOGIN
 ===================================================== */
-app.post("/api/login", (req, res) => {
+
+app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
 
-  if (email === "bharat@example.com" && password === "secret") {
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    return res.json({ token });
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password required" });
   }
 
-  res.status(401).json({ error: "Invalid credentials" });
+  try {
+    const [user] = await db
+      .select()
+      .from(profile)
+      .where(eq(profile.email, email))
+      .limit(1);
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatarUrl: user.avatarUrl,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Login failed" });
+  }
 });
+
 
 /* =====================================================
    PROFILE
