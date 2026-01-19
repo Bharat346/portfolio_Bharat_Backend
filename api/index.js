@@ -17,7 +17,15 @@ const PORT = process.env.PORT || 5000;
 /* =====================================================
    GLOBAL MIDDLEWARE
 ===================================================== */
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://bharat5117.vercel.app/"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
