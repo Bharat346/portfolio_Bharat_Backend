@@ -86,28 +86,38 @@ const seed = async () => {
     console.log("Creating Experience...");
     await db.insert(experience).values([
       {
-        company: "Tech Corp Inc.",
-        role: "Senior Frontend Engineer",
-        startDate: "2023-01",
-        endDate: "Present",
+        title: "Machine Learning Research Intern",
+        company: "NIT Delhi",
+        location: "New Delhi, India",
+        startDate: "2026-01-19",
+        endDate: "2026-02-19",
+        current: false,
         description:
-          "Leading the frontend team, migrating legacy code to React, and improving site performance by 40%.",
+          "Worked as an ML Research Intern focusing on applied machine learning concepts, data preprocessing, model experimentation, and academic research problem solving.",
+        technologies: ["Python", "Machine Learning", "Data Analysis"],
+        achievements: [
+          "Conducted research on applied machine learning models",
+          "Worked with real-world datasets under academic supervision",
+          "Improved understanding of ML research workflows",
+        ],
+        type: "Internship",
       },
       {
-        company: "Startup Hustle",
-        role: "Full Stack Developer",
-        startDate: "2021-06",
-        endDate: "2022-12",
+        title: "AI & Robotics Workshop Participant",
+        company: "AI & Robotics Workshop",
+        location: "India",
+        startDate: "2024-04-03",
+        endDate: "2024-04-16",
+        current: false,
         description:
-          "Built the MVP of the core product using MERN stack. Handled deployment and CI/CD pipelines.",
-      },
-      {
-        company: "Freelance",
-        role: "Web Developer",
-        startDate: "2020-01",
-        endDate: "2021-05",
-        description:
-          "Delivered 10+ custom websites for clients in various industries using WordPress and React.",
+          "Participated in an intensive AI and Robotics workshop covering AI fundamentals, robotics systems, and hands-on practical sessions.",
+        technologies: ["Artificial Intelligence", "Robotics", "Automation"],
+        achievements: [
+          "Hands-on experience with robotics systems",
+          "Understanding of AI-driven automation",
+          "Completed practical AI & robotics exercises",
+        ],
+        type: "Workshop",
       },
     ]);
 

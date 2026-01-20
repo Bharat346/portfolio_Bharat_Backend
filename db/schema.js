@@ -5,6 +5,7 @@ const {
   jsonb,
   timestamp,
   integer,
+  boolean,
 } = require("drizzle-orm/pg-core");
 
 const profile = pgTable("profile", {
@@ -43,11 +44,16 @@ const skills = pgTable("skills", {
 
 const experience = pgTable("experience", {
   id: serial("id").primaryKey(),
+  title: text("title").notNull(),
   company: text("company").notNull(),
-  role: text("role").notNull(),
+  location: text("location"),
   startDate: text("start_date").notNull(),
   endDate: text("end_date"),
+  current: boolean("current").default(false),
   description: text("description"),
+  technologies: jsonb("technologies"),
+  achievements: jsonb("achievements"),
+  type: text("type"), // Full-time | Internship | Contract
 });
 
 module.exports = {
